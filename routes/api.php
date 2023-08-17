@@ -11,8 +11,9 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('/clients')->group(function() {
     Route::get('/', [ClientsController::class, 'index']);
     Route::post('/create', [ClientsController::class, 'store']);
-    Route::match(['PUT', 'PATCH'], '/update/{id}', [ClientsController::class, 'update']);
-    Route::post('/delete/{id}', [ClientsController::class, 'destroy']);
+    Route::get('/getByID/{client}', [ClientsController::class, 'show']);
+    Route::match(['PUT', 'PATCH'], '/update/{client}', [ClientsController::class, 'update']);
+    Route::delete('/delete/{client}', [ClientsController::class, 'destroy']);
 }); 
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

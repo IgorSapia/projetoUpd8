@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+/** Start Models **/
+    use App\Models\Client;
+/** End Models **/
+
 
 class ClientsController extends Controller
 {
@@ -11,19 +16,26 @@ class ClientsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $documentValue = $request->input('document_value');
+        $name = $request->input('name');
+        $birthdate = $request->input('birthdate');
+        $gender = $request->input('gender');
+        $state = $request->input('state');
+        $city = $request->input('city');
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $clientModel = new Client();
+        $paginateSearch = $clientModel->query()
+                    ->document($documentValue)
+                    ->name($name)
+                    ->birthdate($birthdate)
+                    ->gender($gender)
+                    ->city($city)
+                    ->state($state)
+                    ->paginate(10);
+       
+        return $paginateSearch;
     }
 
     /**
@@ -34,7 +46,22 @@ class ClientsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try{
+            $request->validate([
+                'document_value'    => 'required|numeric|unique:clients,document_value',
+                'name'              => 'required|string',
+                'address'           => 'required|string',
+                'birthdate'         => 'required|date',
+                'gender'            => 'required|in:1,2', 
+                'city_id'           => 'required|exists:cities,id'       
+            ]);
+            $clientModel = new Client();
+            $clientModel->fill($request->all())->save();
+            return response()->json(['return' => true], 201);
+        } catch(ValidationException $e){
+            $errors = $e->validator->errors();
+            return response()->json(['return' => false, 'errors' => $errors], 400);
+        }
     }
 
     /**
@@ -43,20 +70,9 @@ class ClientsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Client $client)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return $client;
     }
 
     /**
@@ -66,9 +82,24 @@ class ClientsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Client $client)
     {
-        //
+        try{
+            $request->validate([
+                'document_value'    => 'required|numeric|unique:clients,document_value,'. $client->id,
+                'name'              => 'required|string',
+                'address'           => 'required|string',
+                'birthdate'         => 'required|date',
+                'gender'            => 'required|in:1,2', 
+                'city_id'           => 'required|exists:cities,id'       
+            ]);
+            $clientModel = new Client();
+            $clientModel->find($client->id)->fill($request->all())->save();
+            return response()->json(['return' => true], 204);
+        } catch(ValidationException $e){
+            $errors = $e->validator->errors();
+            return response()->json(['return' => false, 'errors' => $errors], 400);
+        }
     }
 
     /**
@@ -77,8 +108,10 @@ class ClientsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Client $client)
     {
-        //
+        $clientModel = new Client();
+        $clientModel->find($client->id)->delete();
+        return response()->json([], 204);
     }
 }

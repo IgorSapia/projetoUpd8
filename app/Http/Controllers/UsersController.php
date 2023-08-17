@@ -17,6 +17,16 @@ class UsersController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -24,18 +34,7 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        try{
-            $request->validate([
-                'document_value' => 'required|string|unique:clients,document_value',
-                'name' => 'required|string',
-                'birthdate' => 'required|datetime',
-                'gender' => 'required|in:1,2', 
-                'city'   => 'required|exists:cities,id'       
-            ]);
-        } catch(ValidationException $e){
-
-        }
-        dd('alive');
+        //
     }
 
     /**
@@ -50,6 +49,17 @@ class UsersController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -58,7 +68,7 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dd($id);
+        //
     }
 
     /**
