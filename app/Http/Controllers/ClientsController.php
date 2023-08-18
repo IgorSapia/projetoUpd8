@@ -33,6 +33,9 @@ class ClientsController extends Controller
                     ->gender($gender)
                     ->city($city)
                     ->state($state)
+                    ->join('cities', 'cities.id', 'city_id')
+                    ->join('states', 'states.id', 'cities.state_id')
+                    ->select('name', 'document_value', 'birthdate', 'gender', 'states.title as state', 'cities.title as city_name')
                     ->paginate(10);
        
         return $paginateSearch;

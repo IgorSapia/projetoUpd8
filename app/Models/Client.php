@@ -86,7 +86,7 @@ class Client extends Model
 	public function scopeCity(Builder $query, $city)
     {
         return $query->when($city, function ($query) use ($city) {
-			return $query->where('city_id', $city);
+			return $query->where('city_id', $city)->select('title');
         });
     }
 }
